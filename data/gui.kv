@@ -1,0 +1,26 @@
+Screen:
+    RelativeLayout:
+        size_hint: None, None
+        size: root.size
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        BoxLayout:
+            id: boxlayout
+            size_hint: None, None
+            size: root.size
+
+        Label:
+            id: status
+            size_hint: None, None
+            font_size: 40
+            size: self.texture_size
+            pos_hint: {'right': 0.7, 'top': 0.1}
+            text: "Подключение к камере..."
+            color: [0.41, 0.42, 0.74, 1]
+
+        Button:
+            id: change
+            size_hint: None, None
+            size: 50, 50
+            text: "(o)"
+            pos_hint: {'right': 1, 'top': 0.6}
