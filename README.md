@@ -1,4 +1,4 @@
-# Mask Recognizer 2000
+# Mask Recognizer 2000 😷
 An app that checks whether you are wearing a mask or not. Made with OpenCV and Kivy. This is a competitive work for [РДШ "Меридиан"](https://vk.com/public177923488).
 
 <p align="center">
