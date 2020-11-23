@@ -1,5 +1,4 @@
 # -*- mode: python ; coding: utf-8 -*-
-from kivy_deps import sdl2, glew
 import pathlib
 block_cipher = None
 
@@ -23,7 +22,6 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          *[Tree(p) for p in (sdl2.dep_bins + glew.dep_bins)],
           [],
           name='Mask Recognizer 2000',
           debug=False,

@@ -1,78 +1,111 @@
-﻿import cv2
-from kivy.app import App
-from kivy.clock import Clock
-from kivy.graphics.texture import Texture
-from kivy.lang import Builder
-from kivy.uix.image import Image
+import cv2
+import tkinter as tk
+from PIL import Image, ImageTk
 
 import recognition
 
 
-class KivyCamera(Image):
-    def __init__(self, capture, fps, **kwargs):
-        super(KivyCamera, self).__init__(**kwargs)
-        self.capture = capture
-        Clock.schedule_interval(self.update, 1.0 / fps)
+class RecognitionApp(object):
+    def __init__(self, flip=None, callback=None, source=0):
+        self.flip = flip
+        self.callback = callback
+        self.source = source
 
-    def update(self, _):
+        # set up gui
+        self.window = tk.Tk()
+        self.window.resizable(False, False)
+        self.window.wm_title("Mask Recognizer 2000")
+        self.window.config(background="#FFFFFF")
+
+        self.image_frame = tk.Frame(self.window)
+        self.image_frame.grid(row=0)
+
+        self.image_label = tk.Label(self.image_frame)
+        self.image_label.grid(row=0)
+
+        self.bottom_frame = tk.Frame(self.window)
+        self.bottom_frame.grid(row=1)
+
+        self.status_label = tk.Label(self.bottom_frame)
+        self.status_label.grid(row=0, column=1)
+        self.status_label.config(font=("Arial", 44))
+
+        self.flip_button = tk.Button(self.bottom_frame, text="🔄")
+        self.flip_button.grid(row=0, column=0)
+        self.flip_button.bind('<Button-1>', self.flip_camera)
+
+        self.camera_button = tk.Button(self.bottom_frame, text="📷")
+        self.camera_button.grid(row=0, column=2)
+        self.camera_button.bind('<Button-1>', self.change_camera)
+
+        # set up opencv
+        self.capture = cv2.VideoCapture(self.source)
+        self.window.protocol("WM_DELETE_WINDOW", self.on_stop)
+
+    def update(self):
         ret, img = self.capture.read()
         if ret:
             # update image
-            buf1, status = recognition.update(img)
+            buffer, status = recognition.update(img)
+            if self.flip is not None:
+                buffer = cv2.flip(buffer, self.flip)
             # convert it to texture
-            buf = buf1.tostring()
-            image_texture = Texture.create(
-                size=(img.shape[1], img.shape[0]), colorfmt="bgr"
-            )
-            image_texture.blit_buffer(buf, colorfmt="bgr", bufferfmt="ubyte")
-            # display image from the texture
-            self.texture = image_texture
-            app.show_status(status)
+            buffer = cv2.cvtColor(buffer, cv2.COLOR_BGR2RGBA)
+            img = Image.fromarray(buffer)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.image_label.imgtk = imgtk
+            self.image_label.configure(image=imgtk)
 
+            # callbacks
+            self.show_status(status)
+            if self.callback:
+                self.callback(status)
 
-class CamApp(App):
-    source = 0
-
-    def build(self):
-        self.title = "Mask Recognizer 2000"
-        with open("data/gui.kv", "r", encoding="UTF-8") as f:
-            gui = f.read()
-        self.screen = Builder.load_string(gui)
-        return self.screen
+            self.image_label.after(10, self.update)
 
     def show_status(self, status):
-        if status is None:  # no face
-            text = "Лицо не видно"
-            color = [0.41, 0.42, 0.74, 1]
-        elif status:  # mask is weared
+        if status:  # mask is weared
             text = "Маска надета!"
-            color = [0.04, 0.6, 0.19, 1]
-        elif not status:  # mask is not weared
-            text = "Наденьте маску!"
-            color = [1, 0, 0, 1]
+            color = "#00FF00"
+        else:
+            if status is None:  # no face
+                text = "Лицо не видно"
+                color = "#000000"
+            else:  # mask is not weared
+                text = "Наденьте маску!"
+                color = "#FF0000"
 
-        self.screen.ids["status"].text = text
-        self.screen.ids["status"].color = color
+        self.status_label['text'] = text
+        self.status_label.config(fg=color)
 
-    def change_capture(self, _):
+    def flip_camera(self, _):
+        # None / -1 / 0 / 1
+        if self.flip is None:
+            self.flip = -1
+        elif self.flip == -1:
+            self.flip = 0
+        elif self.flip == 0:
+            self.flip = 1
+        else:
+            self.flip = None
+
+    def change_camera(self, _):
         if self.source == 0:
             self.source = 1
         else:
             self.source = 0
         self.capture.release()
         self.capture = cv2.VideoCapture(self.source)
-        self.camera.capture = self.capture
 
-    def on_start(self):
-        self.capture = cv2.VideoCapture(self.source)
-        self.camera = KivyCamera(capture=self.capture, fps=30)
-        self.screen.ids["boxlayout"].add_widget(self.camera)
-        self.screen.ids["change"].bind(on_release=self.change_capture)
+    def run(self):
+        self.update()
+        self.window.mainloop()
 
     def on_stop(self):
         self.capture.release()
+        cv2.destroyAllWindows()
+        self.window.destroy()
 
 
-if __name__ == "__main__":
-    app = CamApp()
-    app.run()
+if __name__ == '__main__':
+    RecognitionApp().run()

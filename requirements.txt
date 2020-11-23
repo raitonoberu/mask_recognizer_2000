@@ -1,2 +1,2 @@
-kivy
 opencv-python
+pillow
