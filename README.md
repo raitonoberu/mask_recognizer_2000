@@ -1,10 +1,11 @@
 # Mask Recognizer 2000 😷
-An app that checks whether you are wearing a mask or not. Made with OpenCV and Kivy. This is a competitive work for [РДШ "Меридиан"](https://vk.com/public177923488).
+An app that checks whether you are wearing a mask or not. Made with OpenCV and Tkinter. This is a competitive work for [РДШ "Меридиан"](https://vk.com/public177923488).
 
+<!--  ADD LATER
 <p align="center">
     <img src="example.jpg?raw=true" width="300"/>
 </p>
-
+-->
 
 ## How does it work?
 The script tries to find the nose and mouth on your face. If he couldn't find them, you wear a mask. Pretty simple, huh?
@@ -17,7 +18,6 @@ $ cd mask_recognizer_2000
 $ pip install -r requirements.txt
 $ python app.py
 ```
-...if only it were that simple. **I promise you**, something won't install properly (if only because the damn Kivy still doesn't normally support Python 3.8+). Google each individual error yourself.
 
 ## Packaging
 ```bash
