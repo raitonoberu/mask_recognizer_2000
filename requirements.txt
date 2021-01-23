@@ -1,3 +1,4 @@
 opencv-python
 pillow
 numpy==1.19.3
+pygame

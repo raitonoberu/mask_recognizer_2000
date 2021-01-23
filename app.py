@@ -1,6 +1,7 @@
 import cv2
 import tkinter as tk
 from PIL import Image, ImageTk
+import pygame
 
 import recognition
 
@@ -32,11 +33,11 @@ class RecognitionApp(object):
 
         self.flip_button = tk.Button(self.bottom_frame, text="🔄")
         self.flip_button.grid(row=0, column=0)
-        self.flip_button.bind('<Button-1>', self.flip_camera)
+        self.flip_button.bind("<Button-1>", self.flip_camera)
 
         self.camera_button = tk.Button(self.bottom_frame, text="📷")
         self.camera_button.grid(row=0, column=2)
-        self.camera_button.bind('<Button-1>', self.change_camera)
+        self.camera_button.bind("<Button-1>", self.change_camera)
 
         # set up opencv
         self.capture = cv2.VideoCapture(self.source)
@@ -75,7 +76,7 @@ class RecognitionApp(object):
                 text = "Наденьте маску!"
                 color = "#FF0000"
 
-        self.status_label['text'] = text
+        self.status_label["text"] = text
         self.status_label.config(fg=color)
 
     def flip_camera(self, _):
@@ -107,5 +108,25 @@ class RecognitionApp(object):
         self.window.destroy()
 
 
-if __name__ == '__main__':
-    RecognitionApp().run()
+class Notifier(object):
+    frames = 0
+
+    def __init__(self, filename, frames_limit):
+        pygame.mixer.init()
+        pygame.mixer.music.load(filename)
+        self.frames_limit = frames_limit
+
+    def callback(self, status):
+        if status is False:
+            self.frames += 1
+            if self.frames >= self.frames_limit:
+                if pygame.mixer.music.get_busy() == 0:
+                    pygame.mixer.music.play()
+        else:
+            self.frames = 0
+            if pygame.mixer.music.get_busy() == 1:
+                pygame.mixer.music.stop()
+
+
+if __name__ == "__main__":
+    RecognitionApp(callback=Notifier("data/sound.ogg", 3).callback).run()
