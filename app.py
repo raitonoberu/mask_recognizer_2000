@@ -129,4 +129,4 @@ class Notifier(object):
 
 
 if __name__ == "__main__":
-    RecognitionApp(callback=Notifier("data/sound.ogg", 3).callback).run()
+    RecognitionApp(callback=Notifier("data/sound.wav", 3).callback).run()
