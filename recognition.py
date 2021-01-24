@@ -20,29 +20,21 @@ def update(img, face_color=(255, 255, 255), mouth_color=(0, 0, 255), nose_color=
         # Detect nose counters
         nose_rects = nose_cascade.detectMultiScale(gray, 1.3, 5)
 
-        # Draw rectangle on mouth
-        if mouth_color:
-            for (x, y, w, h) in mouth_rects:
-                cv2.rectangle(img, (x, y), (x + w, y + h), mouth_color, 2)
-
-        # Draw rectangle on nose
-        if nose_color:
-            for (x, y, w, h) in nose_rects:
-                cv2.rectangle(img, (x, y), (x + w, y + h), nose_color, 2)
-
         # Draw rectangle on face
-        if face_color:
-            for (x, y, w, h) in faces:
-                cv2.rectangle(img, (x, y), (x + w, y + h), face_color, 2)
+        for (fx, fy, fw, fh) in faces:
+            if face_color:
+                cv2.rectangle(img, (fx, fy), (fx + fw, fy + fh), face_color, 2)
 
         status = True
         if not (len(mouth_rects) == 0 and len(nose_rects) == 0):
             for (mx, my, mw, mh) in mouth_rects:
-                if y < my < y + h:
+                if fy < my < fy + fh and fx < mx < fx + fw:
+                    cv2.rectangle(img, (mx, my), (mx + mw, my + mh), mouth_color, 2)
                     status = False
                     break
-            for (mx, my, mw, mh) in nose_rects:
-                if y < my < y + h:
+            for (nx, ny, nw, nh) in nose_rects:
+                if fy < ny < fy + fh and fx < nx < fx + fw:
+                    cv2.rectangle(img, (nx, ny), (nx + nw, ny + nh), nose_color, 2)
                     status = False
                     break
 
