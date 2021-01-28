@@ -24,4 +24,4 @@ $ python app.py
 $ pip install pyinstaller
 $ pyinstaller app.spec
 ```
-A 200 MB+ .exe file will be generated in *dist* folder. It doesn't contain a *data* folder, so use them together. I do not know how to reduce the size, so make a Pull Request if you know.
+A ~60 MB .exe file will be generated in *dist* folder. It doesn't contain a *data* folder, so use them together.
