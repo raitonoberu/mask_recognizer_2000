@@ -1,5 +1,5 @@
 # Mask Recognizer 2000 😷
-An app that checks whether you are wearing a mask or not. Made with OpenCV and Tkinter. This is a competitive work for [РДШ "Меридиан"](https://vk.com/public177923488).
+An app that checks whether you are wearing a mask or not. Made with OpenCV and Tkinter. This is a competitive work for [V Международная очно-заочная научно-практическая конференция обучающихся «МИР МОИХ ИССЛЕДОВАНИЙ»](https://sites.google.com/prod/site/dpofmitef/skolnikam/konferencii).
 
 <!--  ADD LATER
 <p align="center">
